@@ -29,7 +29,124 @@ class TestForm1:
 
         assert 'успешно' in result_message.inner_text()
 
+    @pytest.mark.parametrize("username", ["", " ", f"{"t"*100}"])
+    def test_invalid_username(self, username: str, playwright: Playwright):
+        browser: Browser = playwright.chromium.launch(headless=False)
+        context: BrowserContext = browser.new_context()
+        page: Page = context.new_page()
+        page.goto("https://aqa-proka4.org/sandbox/web#forms")
 
+        username_field = page.locator("#username")
+        email_field = page.locator("#email")
+        password_field = page.locator("#password")
+        country_field = page.locator("#country")
+        terms_checkbox = page.locator("#terms")
+        register_button = page.locator("#submitBtn")
+        result_message = page.locator("#formResult")
+
+        username_field.fill(username)
+        email_field.fill("autotest@test.ru")
+        password_field.fill("qwerty")
+        country_field.select_option("ru")
+        terms_checkbox.click()
+        register_button.click()
+
+        assert result_message.is_visible() is False
+
+    def test_registry_without_checkbox(self, playwright: Playwright):
+        browser: Browser = playwright.chromium.launch(headless=False)
+        context: BrowserContext = browser.new_context()
+        page: Page = context.new_page()
+        page.goto("https://aqa-proka4.org/sandbox/web#forms")
+
+        username_field = page.locator("#username")
+        email_field = page.locator("#email")
+        password_field = page.locator("#password")
+        country_field = page.locator("#country")
+        register_button = page.locator("#submitBtn")
+        result_message = page.locator("#formResult")
+
+        username_field.fill("autotest")
+        email_field.fill("autotest@test.ru")
+        password_field.fill("qwerty")
+        country_field.select_option("ru")
+        register_button.click()
+
+        assert result_message.is_visible() is False
+
+
+class TestForm2:
+
+    @pytest.mark.parametrize("username, email, password", [
+        ('admin', 'test@test.ru	', 'password123'),
+        ('юзернейм', 'cp@ladogaspb.ru', 'Autotest2026!'),
+        ('VeryLongUserName', 'user.name+alias@domain.co', '12345678aB'),
+        ('12345', '1@2.ru', 'p4ssword'),
+        ('USER_NAME', 'EMAIL@DOMAIN.COM', '9876543210zZ'),
+    ])
+    def test_registration_with_valid_values(self, playwright: Playwright, username: str, email: str, password: str):
+        browser: Browser = playwright.chromium.launch(headless=True)
+        context: BrowserContext = browser.new_context()
+        page: Page = context.new_page()
+        page.goto("https://aqa-proka4.org/sandbox/web#forms")
+
+        username_field = page.locator("#val-username")
+        email_field = page.locator("#val-email")
+        password_field = page.locator("#val-password")
+        confirm_password_field = page.locator("#val-confirm-password")
+        submit_button = page.locator("#valSubmitBtn")
+
+        username_field.fill(username)
+        email_field.fill(email)
+        password_field.fill(password)
+        confirm_password_field.fill(password)
+        submit_button.click()
+
+        result_form = page.locator("#valFormResult")
+
+        expected_text_in_form = 'проверки пройдены'
+
+        assert expected_text_in_form in result_form.inner_text()
+
+    @pytest.mark.parametrize("username, email, password", [
+        ('shar', 'test.ru', 'pas1237'),
+        ('', 'test', 'pass'),
+        (' ', '', '1'),
+    ])
+    def test_registration_with_invalid_values(self, playwright: Playwright, username: str, email: str, password: str):
+        browser: Browser = playwright.chromium.launch(headless=True)
+        context: BrowserContext = browser.new_context()
+        page: Page = context.new_page()
+        page.goto("https://aqa-proka4.org/sandbox/web#forms")
+
+        username_field = page.locator("#val-username")
+        username_error_field = page.locator("#username-error")
+
+        email_field = page.locator("#val-email")
+        email_error_field = page.locator("#email-error")
+
+        password_field = page.locator("#val-password")
+        password_error_field = page.locator("#password-error")
+
+        confirm_password_field = page.locator("#val-confirm-password")
+        submit_button = page.locator("#valSubmitBtn")
+
+        username_field.fill(username)
+        email_field.fill(email)
+        password_field.fill(password)
+        confirm_password_field.fill(password)
+
+        submit_button.click()
+
+        assert username_error_field.is_visible()
+        assert email_error_field.is_visible()
+        assert password_error_field.is_visible()
+
+        result_form = page.locator("#valFormResult")
+
+        expected_text_in_form = 'содержит ошибки'
+
+        assert expected_text_in_form in result_form.inner_text()
 
 
 
