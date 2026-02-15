@@ -150,3 +150,26 @@ class TestForm2:
 
 
 
+class TestForm3:
+
+    def test_send_form_with_one_email_and_phone_number(self, playwright: Playwright):
+        browser: Browser = playwright.chromium.launch(headless=False)
+        context: BrowserContext = browser.new_context()
+        page: Page = context.new_page()
+
+        page.goto("https://aqa-proka4.org/sandbox/web#forms")
+        username_field = page.locator("#dyn-name")
+        email_blocks_first_input = page.locator("#emailFields").nth(0)
+        phone_number_blocks_first_input = page.locator("#phoneFields").nth(0)
+        submit_button = page.locator("#dynSubmitBtn")
+        success_text = page.locator("#dynFormResult i")
+
+        username_field.fill("Ilnur")
+        email_blocks_first_input.fill("test@test.ru")
+        phone_number_blocks_first_input.fill("+79991234567")
+        submit_button.click()
+
+
+
+        assert "успешно" in success_text.inner_text()
+
