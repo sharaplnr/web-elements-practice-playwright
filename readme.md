@@ -39,7 +39,7 @@
 2. **Запуск тестов в режиме Headed (с визуализацией):**
     ````
     pytest --headed
-
+   
 3. **Генерация Allure-отчета:**
     ````
     pytest --alluredir=allure-results
