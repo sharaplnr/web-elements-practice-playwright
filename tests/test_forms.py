@@ -2,32 +2,25 @@ import pytest
 
 from playwright.sync_api import Page, Playwright, Browser, BrowserContext
 
+from constants.country import Country
+from pages.blocks.simple_form.simple_form import SimpleForm
+
 
 class TestForm1:
 
-    def test_valid_values(self, playwright: Playwright):
-        browser: Browser = playwright.chromium.launch(headless=False)
-        context: BrowserContext = browser.new_context()
-        page: Page = context.new_page()
+    @pytest.mark.parametrize("username, email, password", [
+        ("autotest", "test@test.ru", "qwerty"),
+        (" ", " ", " "),
+    ])
+    def test_registry_form_with_valid_values(self, page_init, username, email, password):
+        form1 = SimpleForm(page_init)
 
-        page.goto("https://aqa-proka4.org/sandbox/web#forms")
+        form1.fill_data_into_form_fields_and_registry(username=username,
+                                                      email=email,
+                                                      password=password,
+                                                      country=Country.RUSSIA)
 
-        username_field = page.locator("#username")
-        email_field = page.locator("#email")
-        password_field = page.locator("#password")
-        country_field = page.locator("#country")
-        terms_checkbox = page.locator("#terms")
-        register_button = page.locator("#submitBtn")
-        result_message = page.locator("#formResult")
-
-        username_field.fill("autotest")
-        email_field.fill("autotest@test.ru")
-        password_field.fill("qwerty")
-        country_field.select_option("ru")
-        terms_checkbox.click()
-        register_button.click()
-
-        assert 'успешно' in result_message.inner_text()
+        assert 'успешно' in form1.result_message()
 
     @pytest.mark.parametrize("username", ["", " ", f"{"t"*100}"])
     def test_invalid_username(self, username: str, playwright: Playwright):
