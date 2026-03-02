@@ -1,0 +1,26 @@
+# PyCharm
+.idea/
+
+# Git
+.git/
+.git-ci.yaml
+
+# Виртуальные окружения
+venv/
+.venv/
+
+# Pipenv
+Pipfile
+Pipfile.lock
+
+# Poetry
+poetry.lock
+
+# Python артефакты
+*.pyc
+__pycache__/
+
+# Отчёты и временные файлы тестов (если есть)
+allure-results/
+allure-report/
+.cache/

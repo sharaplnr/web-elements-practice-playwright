@@ -8,7 +8,7 @@ class SimpleForm:
     def __init__(self, page: Page):
         self.elements = SimpleFormElements(page)
 
-    def fill_data_into_form_fields_and_registry(self, username: str = None, password: str = None, email: str = None, country: Country = None) -> None:
+    def fill_data_into_form_and_registry(self, username: str = None, password: str = None, email: str = None, country: Country = None) -> None:
         self.elements.username.fill(username)
         self.elements.password.fill(password)
         self.elements.email.fill(email)

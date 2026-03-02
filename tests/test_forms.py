@@ -15,7 +15,7 @@ class TestForm1:
     def test_registry_form_with_valid_values(self, page_init, username, email, password):
         form1 = SimpleForm(page_init)
 
-        form1.fill_data_into_form_fields_and_registry(username=username,
+        form1.fill_data_into_form_and_registry(username=username,
                                                       email=email,
                                                       password=password,
                                                       country=Country.RUSSIA)
